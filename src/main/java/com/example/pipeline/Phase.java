@@ -1,10 +1,12 @@
 package com.example.pipeline;
 
-public interface Phase {
-    void execute(Context context, AbortController abortController) throws InterruptedException;
+import lombok.Getter;
+import lombok.Setter;
 
-    @FunctionalInterface
-    interface AbortController {
-        boolean aborted();
-    }
+@Getter
+@Setter
+public abstract class Phase implements PhaseRunable {
+    protected String name;
+    protected boolean skipped;
+    protected boolean interoperable;
 }
