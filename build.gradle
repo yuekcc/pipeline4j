@@ -12,6 +12,9 @@ repositories {
 }
 
 dependencies {
+    implementation("io.javalin:javalin:6.7.0")
+    implementation("com.alibaba.fastjson2:fastjson2:2.0.58")
+
     compileOnly("org.projectlombok:lombok:1.18.40")
     annotationProcessor("org.projectlombok:lombok:1.18.40")
 

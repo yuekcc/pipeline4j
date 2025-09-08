@@ -9,7 +9,7 @@
     </appender>
 
     <!-- 设置根日志级别，并引用上面定义的 Appender -->
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

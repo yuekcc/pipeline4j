@@ -1,14 +1,13 @@
 package com.example.phase;
 
+import com.example.pipeline.AbortController;
 import com.example.pipeline.Context;
 import com.example.pipeline.Phase;
-import com.example.pipeline.PhaseRunable;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class StartPhase extends Phase {
-    @Override
-    public void execute(Context context, PhaseRunable.AbortController controller) {
+    public void execute(Context context, AbortController controller) {
         log.info("流水线...开始");
     }
 

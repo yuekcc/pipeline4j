@@ -1,5 +1,6 @@
 package com.example.phase;
 
+import com.example.pipeline.AbortController;
 import com.example.pipeline.Context;
 import com.example.pipeline.Phase;
 import lombok.extern.slf4j.Slf4j;
@@ -12,9 +13,8 @@ public class PlaceholderPhase extends Phase {
         this.name = name;
     }
 
-    @Override
     public void execute(Context context, AbortController controller) {
-        log.info("流水线...结束");
+        log.info("占位任务：{}...已完成", this.getName());
     }
 
     @Override

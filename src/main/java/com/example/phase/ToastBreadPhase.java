@@ -1,12 +1,12 @@
 package com.example.phase;
 
+import com.example.pipeline.AbortController;
 import com.example.pipeline.Context;
 import com.example.pipeline.Phase;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ToastBreadPhase extends Phase {
-    @Override
     public void execute(Context context, AbortController controller) throws Exception {
         if (this.isSkipped()) {
             return;
