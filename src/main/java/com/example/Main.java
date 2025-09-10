@@ -28,7 +28,7 @@ public class Main {
         pipeline.addPhase(new BillPhase());
         pipeline.addPhase(new EndPhase());
 
-        pipeline.start();
+        pipeline.startAsync();
         return pipeline;
     }
 
@@ -46,7 +46,7 @@ public class Main {
                 ctx.header("Content-Type", "application/json").result(JSON.toJSONString(Map.of()));
                 return;
             }
-            ctx.header("Content-Type", "application/json").result(JSON.toJSONString(pipeline.getState()));
+            ctx.header("Content-Type", "application/json").result(JSON.toJSONString(pipeline.getData()));
         });
 
         app.get("/v1/stop", ctx -> {

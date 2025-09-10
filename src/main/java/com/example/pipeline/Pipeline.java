@@ -52,13 +52,51 @@ public class Pipeline {
         this.confirmController = null;
     }
 
+    private void work() {
+        log.info("=== 流水线启动 ===");
+        try {
+            for (currentPhaseIndex = 0; currentPhaseIndex < phases.size(); currentPhaseIndex++) {
+                Phase phase = phases.get(currentPhaseIndex);
+                if (phase == null) {
+                    continue;
+                }
+
+                if (phase.isSkipped()) {
+                    log.info("跳过: {}", phase.getName());
+                    continue;
+                }
+
+                if (this.isInterrupted() && phase.isInteroperable()) {
+                    log.info("流水线已中止，跳过: {}", phase.getName());
+                    continue;
+                }
+
+                phase.execute(this.context, this.abortController);
+                if (phase.isRequireConfirm()) {
+                    this.handleConfirm();
+                }
+            }
+        } catch (Exception ex) {
+            log.error("ERROR, {}", ex.getMessage(), ex);
+        } finally {
+            log.info("=== 流水线停止 ===");
+            this.finish.set(true);
+
+            // 清理
+            this.thread = null;
+            this.abortController = null;
+            this.context = null;
+            this.phases = null;
+        }
+    }
+
     // 添加新任务
     public void addPhase(Phase phase) {
         log.info("add phase: {}", phase.getName());
         phases.add(phase);
     }
 
-    public void start() throws InterruptedException {
+    public void startAsync() throws InterruptedException {
         this.start(true);
     }
 
@@ -76,47 +114,9 @@ public class Pipeline {
             };
         }
 
-        this.thread = new Thread(() -> {
-            log.info("=== 流水线启动 ===");
-            try {
-                for (currentPhaseIndex = 0; currentPhaseIndex < phases.size(); currentPhaseIndex++) {
-                    Phase phase = phases.get(currentPhaseIndex);
-                    if (phase == null) {
-                        continue;
-                    }
-
-                    if (phase.isSkipped()) {
-                        log.info("跳过: {}", phase.getName());
-                        continue;
-                    }
-
-                    if (this.isInterrupted() && phase.isInteroperable()) {
-                        log.info("流水线已中止，跳过: {}", phase.getName());
-                        continue;
-                    }
-
-                    phase.execute(this.context, this.abortController);
-                    if (phase.isRequireConfirm()) {
-                        this.handleConfirm();
-                    }
-                }
-            } catch (Exception ex) {
-                log.error("ERROR, {}", ex.getMessage(), ex);
-            } finally {
-                log.info("=== 流水线停止 ===");
-                this.finish.set(true);
-
-                // 清理
-                this.thread = null;
-                this.abortController = null;
-                this.context = null;
-                this.phases = null;
-            }
-        });
-
-        if (isAsync) {
-            thread.start();
-        } else {
+        this.thread = new Thread(this::work);
+        thread.start();
+        if (!isAsync) {
             thread.join();
         }
     }
@@ -141,7 +141,7 @@ public class Pipeline {
         return this.finish.get();
     }
 
-    public Context getState() {
-        return this.context;
+    public Context getData() {
+        return JSON.parseObject(JSON.toJSONString(this.context), Context.class);
     }
 }
