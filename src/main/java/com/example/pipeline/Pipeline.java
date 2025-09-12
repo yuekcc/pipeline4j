@@ -144,4 +144,8 @@ public class Pipeline {
     public Context getData() {
         return JSON.parseObject(JSON.toJSONString(this.context), Context.class);
     }
+
+    public int getPhaseCount() {
+        return phases != null ? phases.size() : 0;
+    }
 }
